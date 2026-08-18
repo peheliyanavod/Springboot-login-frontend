@@ -1,0 +1,15 @@
+<div class="messages-container">
+  <h3>Backend Messages</h3>
+  @if (errorMessage()) {
+    <div class="error-msg">{{ errorMessage() }}</div>
+  }
+
+  <ul class="messages-list">
+    @for (item of data(); track $index) {
+      <li class="message-item">
+        <span class="badge">{{ $index + 1 }}</span>
+        <span class="text">{{ item }}</span>
+      </li>
+    }
+  </ul>
+</div>
