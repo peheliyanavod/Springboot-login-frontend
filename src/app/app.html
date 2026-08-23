@@ -5,16 +5,40 @@
         <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
         <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
       </svg>
-      <span>Login System</span>
+      <span>Authentication System</span>
     </div>
+    @if (activeTab() === 'auth') {
+      <button class="logout-btn" (click)="logout()">Logout</button>
+    }
   </header>
 
   <main class="main-content">
-    <!-- <app-welcome-content></app-welcome-content> -->
-    <app-login-form (onSubmitEventLogin)="handleLogin($event)"></app-login-form>
-    <!-- <div class="info-section">
-      <app-auth-content></app-auth-content>
-    </div> -->
+    @if (message()) {
+      <div class="alert alert-success">
+        {{ message() }}
+      </div>
+    }
+
+    @if (errorMessage()) {
+      <div class="alert alert-danger">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    @if (activeTab() === 'login') {
+      <app-login-form 
+        (onSubmitEventLogin)="handleLogin($event)"
+        (onSwitchToRegister)="showRegister()">
+      </app-login-form>
+    } @else if (activeTab() === 'register') {
+      <app-register-form 
+        (onSubmitEventRegister)="handleRegister($event)"
+        (onSwitchToLogin)="showLogin()">
+      </app-register-form>
+    } @else if (activeTab() === 'auth') {
+      <div class="authenticated-view">
+        <app-auth-content></app-auth-content>
+      </div>
+    }
   </main>
 </div>
-

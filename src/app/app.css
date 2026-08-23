@@ -31,6 +31,21 @@
   color: #4f46e5;
 }
 
+.logout-btn {
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.logout-btn:hover {
+  background-color: #dc2626;
+}
+
 .main-content {
   flex: 1;
   display: flex;
@@ -40,8 +55,31 @@
   padding: 2rem 1rem;
 }
 
-.info-section {
+.alert {
   width: 100%;
   max-width: 440px;
-  margin-top: 1.5rem;
+  padding: 0.875rem 1.25rem;
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  margin-bottom: 1.25rem;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.alert-success {
+  background-color: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #065f46;
+}
+
+.alert-danger {
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+}
+
+.authenticated-view {
+  width: 100%;
+  max-width: 440px;
 }
