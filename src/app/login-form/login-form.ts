@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -9,6 +9,7 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './login-form.css',
 })
 export class LoginForm {
+  @Input() serverError: string = '';
   @Output() onSubmitEventLogin = new EventEmitter<{ username: string; password: string }>();
   @Output() onSwitchToRegister = new EventEmitter<void>();
 

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -9,7 +9,8 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './register-form.css',
 })
 export class RegisterForm {
-  @Output() onSubmitEventRegister = new EventEmitter<{ email: string; password: string }>();
+  @Input() serverError: string = '';
+  @Output() onSubmitEventRegister = new EventEmitter<{ email: string; password: string; confirmPassword: string }>();
   @Output() onSwitchToLogin = new EventEmitter<void>();
 
   email: string = '';
@@ -18,12 +19,20 @@ export class RegisterForm {
   errorMessage: string = '';
 
   onSubmit(): void {
+    if (this.email.trim() === '' ) {
+      this.errorMessage = 'Email is required';
+      return;
+    }
+    if (this.password.length < 8) {
+      this.errorMessage = 'Password must be at least 8 characters long';
+      return;
+    }
     if (this.password !== this.confirmPassword) {
       this.errorMessage = 'Passwords do not match';
       return;
     }
     this.errorMessage = '';
-    this.onSubmitEventRegister.emit({ email: this.email, password: this.password });
+    this.onSubmitEventRegister.emit({ email: this.email, password: this.password, confirmPassword: this.confirmPassword });
   }
 
   switchToLogin(event: Event): void {

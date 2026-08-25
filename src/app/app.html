@@ -19,19 +19,15 @@
       </div>
     }
 
-    @if (errorMessage()) {
-      <div class="alert alert-danger">
-        {{ errorMessage() }}
-      </div>
-    }
-
     @if (activeTab() === 'login') {
       <app-login-form 
+        [serverError]="errorMessage()"
         (onSubmitEventLogin)="handleLogin($event)"
         (onSwitchToRegister)="showRegister()">
       </app-login-form>
     } @else if (activeTab() === 'register') {
       <app-register-form 
+        [serverError]="errorMessage()"
         (onSubmitEventRegister)="handleRegister($event)"
         (onSwitchToLogin)="showLogin()">
       </app-register-form>

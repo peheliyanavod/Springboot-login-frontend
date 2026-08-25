@@ -12,6 +12,12 @@
 			<p class="subtitle">Welcome back!</p>
 		</div>
 
+		@if (serverError) {
+			<div class="error-banner">
+				{{ serverError }}
+			</div>
+		}
+
 		<form (ngSubmit)="onSubmit()">
 			<div class="form-group">
 				<label for="username">Email / Username</label>

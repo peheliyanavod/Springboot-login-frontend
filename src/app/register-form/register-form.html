@@ -13,9 +13,9 @@
 			<p class="subtitle">Join us today! Enter your details to get started.</p>
 		</div>
 
-		@if (errorMessage) {
+		@if (errorMessage || serverError) {
 			<div class="error-banner">
-				{{ errorMessage }}
+				{{ errorMessage || serverError }}
 			</div>
 		}
 

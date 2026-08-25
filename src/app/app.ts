@@ -50,7 +50,7 @@ export class App {
       });
   }
 
-  handleRegister(input: { email: string; password: string }): void {
+  handleRegister(input: { email: string; password: string; confirmPassword: string }): void {
     this.message.set('');
     this.errorMessage.set('');
     this.axios.request('POST', '/register', input)
