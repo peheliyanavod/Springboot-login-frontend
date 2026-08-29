@@ -108,4 +108,53 @@
       </div>
     </div>
   </div>
+
+  <!-- System Logs Section -->
+  <div class="dashboard-card logs-card">
+    <h3 class="card-title">System Logs</h3>
+    <div class="table-responsive">
+      <table class="users-table logs-table">
+        <thead>
+          <tr>
+            <th>
+              User Name
+              <input type="text" class="filter-input" placeholder="Filter by User..." [value]="filterUserName" (input)="onFilterChange($event, 'userName')">
+            </th>
+            <th>
+              IP Address
+              <input type="text" class="filter-input" placeholder="Filter by IP..." [value]="filterIpAddress" (input)="onFilterChange($event, 'ipAddress')">
+            </th>
+            <th>
+              Date / Time
+              <input type="text" class="filter-input" placeholder="Filter by date..." [value]="filterDate" (input)="onFilterChange($event, 'dateFilter')">
+            </th>
+            <th>
+              Log Message
+              <input type="text" class="filter-input" placeholder="Filter by message..." [value]="filterLogMessage" (input)="onFilterChange($event, 'logMessage')">
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (log of systemLogs; track log.id) {
+            <tr>
+              <td>{{ log.userName }}</td>
+              <td>{{ log.ipAddress }}</td>
+              <td>{{ log.dateTime | date:'medium' }}</td>
+              <td>{{ log.log }}</td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="4" class="text-center">No system logs found.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="pagination-controls">
+      <button class="btn-pagination" [disabled]="logsCurrentPage === 0" (click)="prevPage()">Previous</button>
+      <span class="page-info">Page {{ logsTotalPages > 0 ? logsCurrentPage + 1 : 0 }} of {{ logsTotalPages }}</span>
+      <button class="btn-pagination" [disabled]="logsCurrentPage >= logsTotalPages - 1 || logsTotalPages === 0" (click)="nextPage()">Next</button>
+    </div>
+  </div>
 </div>
