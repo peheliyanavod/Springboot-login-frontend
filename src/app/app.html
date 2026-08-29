@@ -7,7 +7,7 @@
       </svg>
       <span>Authentication System</span>
     </div>
-    @if (activeTab() === 'auth') {
+    @if (activeTab() === 'auth' || activeTab() === 'admin') {
       <button class="logout-btn" (click)="logout()">Logout</button>
     }
   </header>
@@ -49,6 +49,8 @@
       <div class="authenticated-view">
         <app-welcome-content></app-welcome-content>
       </div>
+    } @else if (activeTab() === 'admin') {
+      <app-admin-dashboard></app-admin-dashboard>
     }
   </main>
 </div>

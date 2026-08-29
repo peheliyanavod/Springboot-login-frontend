@@ -4,19 +4,20 @@ import { LoginForm } from "./login-form/login-form";
 import { RegisterForm } from "./register-form/register-form";
 import { ForgotPasswordForm } from "./forgot-password-form/forgot-password-form";
 import { ResetPasswordForm } from "./reset-password-form/reset-password-form";
+import { AdminDashboard } from "./admin-dashboard/admin-dashboard";
 import { Axios } from './axios';
 import { ThemeService } from './theme.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [WelcomeContent, LoginForm, RegisterForm, ForgotPasswordForm, ResetPasswordForm],
+  imports: [WelcomeContent, LoginForm, RegisterForm, ForgotPasswordForm, ResetPasswordForm, AdminDashboard],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App implements OnInit {
   protected readonly title = signal('frontend');
-  activeTab = signal<'login' | 'register' | 'auth' | 'forgot-password' | 'reset-password'>('login');
+  activeTab = signal<'login' | 'register' | 'auth' | 'admin' | 'forgot-password' | 'reset-password'>('login');
   message = signal<string>('');
   errorMessage = signal<string>('');
 
@@ -35,6 +36,26 @@ export class App implements OnInit {
         this.resetToken = token;
         this.resetEmail = email;
         this.activeTab.set('reset-password');
+        return;
+      }
+
+      // Check if session token exists
+      const savedToken = this.axios.getAuthToken();
+      if (savedToken) {
+        this.axios.setAuthToken(savedToken);
+        this.axios.request('GET', '/me', {})
+          .then((response) => {
+            if (response.data && response.data.userType === 'Super Admin') {
+              this.activeTab.set('admin');
+            } else {
+              this.activeTab.set('auth');
+            }
+          })
+          .catch((error) => {
+            console.error('Session validation failed:', error);
+            this.axios.setAuthToken(null);
+            this.activeTab.set('login');
+          });
       }
     }
   }
@@ -60,7 +81,12 @@ export class App implements OnInit {
           this.axios.setAuthToken(response.data.token);
         }
         this.message.set('Login successful!');
-        this.activeTab.set('auth');
+        
+        if (response.data && response.data.userType === 'Super Admin') {
+          this.activeTab.set('admin');
+        } else {
+          this.activeTab.set('auth');
+        }
       })
       .catch((error) => {
         console.error('Login error:', error);
@@ -78,7 +104,12 @@ export class App implements OnInit {
           this.axios.setAuthToken(response.data.token);
         }
         this.message.set('Registration successful! You are now logged in.');
-        this.activeTab.set('auth');
+        
+        if (response.data && response.data.userType === 'Super Admin') {
+          this.activeTab.set('admin');
+        } else {
+          this.activeTab.set('auth');
+        }
       })
       .catch((error) => {
         console.error('Register error:', error);

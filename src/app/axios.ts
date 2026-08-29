@@ -29,7 +29,9 @@ export class Axios {
   }
 
   request(method: string, url: string, data?: any) {
-    let headers: any = {};
+    let headers: any = {
+      'Content-Type': 'application/json'
+    };
     const token = this.getAuthToken();
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;

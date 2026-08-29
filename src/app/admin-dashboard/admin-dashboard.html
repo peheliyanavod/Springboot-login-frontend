@@ -1,0 +1,105 @@
+<div class="admin-dashboard">
+  <div class="dashboard-header">
+    <div class="header-content">
+      <h2 class="dashboard-title">Super Admin Dashboard</h2>
+      <p class="dashboard-subtitle">Manage users and system settings</p>
+    </div>
+  </div>
+
+  @if (successMessage) {
+    <div class="alert alert-success">{{ successMessage }}</div>
+  }
+  @if (errorMessage) {
+    <div class="alert alert-danger">{{ errorMessage }}</div>
+  }
+
+  <div class="dashboard-grid">
+    <!-- Users List Section -->
+    <div class="dashboard-card users-card">
+      <h3 class="card-title">User Management</h3>
+      <div class="table-responsive">
+        <table class="users-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (user of users; track user.id) {
+              <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                  <span class="role-badge" [class.super-admin]="user.userType === 'Super Admin'">
+                    {{ user.userType }}
+                  </span>
+                </td>
+                <td>
+                  <span class="status-badge" [class.active]="user.status === 'Active'" [class.inactive]="user.status === 'Inactive'">
+                    {{ user.status }}
+                  </span>
+                </td>
+                <td>
+                  <button 
+                    class="btn-toggle" 
+                    [class.btn-deactivate]="user.status === 'Active'"
+                    [class.btn-activate]="user.status === 'Inactive'"
+                    [disabled]="user.userType === 'Super Admin'"
+                    [style.opacity]="user.userType === 'Super Admin' ? '0.5' : '1'"
+                    [style.cursor]="user.userType === 'Super Admin' ? 'not-allowed' : 'pointer'"
+                    (click)="toggleUserStatus(user)">
+                    {{ user.status === 'Active' ? 'Deactivate' : 'Activate' }}
+                  </button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5" class="text-center">No users found.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Theme Settings Section (Same as Welcome Content) -->
+    <div class="dashboard-card theme-card">
+      <div class="theme-settings-panel">
+        <h3 class="theme-panel-title">Theme Personalization</h3>
+        
+        <div class="theme-setting-row">
+          <span class="setting-label">Accent Color</span>
+          <div class="color-swatches">
+            @for (preset of themeService.presets; track preset.name) {
+              <button 
+                class="color-swatch" 
+                [style.backgroundColor]="preset.primary"
+                [class.active]="themeService.currentPreset.name === preset.name"
+                (click)="themeService.setPreset(preset.name)"
+                [title]="preset.name"
+                aria-label="Set theme to {{ preset.name }}">
+                @if (themeService.currentPreset.name === preset.name) {
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                }
+              </button>
+            }
+          </div>
+        </div>
+        
+        <div class="theme-setting-row">
+          <span class="setting-label">Dark Mode</span>
+          <label class="switch">
+            <input type="checkbox" [checked]="themeService.isDarkMode" (change)="themeService.toggleDarkMode()">
+            <span class="slider round"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
