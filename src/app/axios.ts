@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import axios from 'axios';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class Axios {
   constructor() {
-    axios.defaults.baseURL = 'http://localhost:8080/';
+    axios.defaults.baseURL = environment.backendUrl;
     axios.defaults.headers.post['Content-Type'] = 'application/json';
   }
 

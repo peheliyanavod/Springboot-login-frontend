@@ -23,8 +23,22 @@
       <app-login-form 
         [serverError]="errorMessage()"
         (onSubmitEventLogin)="handleLogin($event)"
-        (onSwitchToRegister)="showRegister()">
+        (onSwitchToRegister)="showRegister()"
+        (onSwitchToForgotPassword)="showForgotPassword()">
       </app-login-form>
+    } @else if (activeTab() === 'forgot-password') {
+      <app-forgot-password-form
+        [serverError]="errorMessage()"
+        [message]="message()"
+        (onSubmitEvent)="handleForgotPassword($event)"
+        (onSwitchToLogin)="showLogin()">
+      </app-forgot-password-form>
+    } @else if (activeTab() === 'reset-password') {
+      <app-reset-password-form
+        [serverError]="errorMessage()"
+        (onSubmitEvent)="handleResetPassword($event)"
+        (onSwitchToLogin)="showLogin()">
+      </app-reset-password-form>
     } @else if (activeTab() === 'register') {
       <app-register-form 
         [serverError]="errorMessage()"

@@ -12,6 +12,7 @@ export class LoginForm {
   @Input() serverError: string = '';
   @Output() onSubmitEventLogin = new EventEmitter<{ username: string; password: string }>();
   @Output() onSwitchToRegister = new EventEmitter<void>();
+  @Output() onSwitchToForgotPassword = new EventEmitter<void>();
 
   username: string = '';
   password: string = '';
@@ -23,5 +24,10 @@ export class LoginForm {
   switchToRegister(event: Event): void {
     event.preventDefault();
     this.onSwitchToRegister.emit();
+  }
+
+  switchToForgotPassword(event: Event): void {
+    event.preventDefault();
+    this.onSwitchToForgotPassword.emit();
   }
 }
