@@ -1,5 +1,4 @@
 import { Component, signal } from '@angular/core';
-import { AuthContent } from './auth-content/auth-content';
 import { WelcomeContent } from './welcome-content/welcome-content';
 import { LoginForm } from "./login-form/login-form";
 import { RegisterForm } from "./register-form/register-form";
@@ -8,7 +7,7 @@ import { Axios } from './axios';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [AuthContent, WelcomeContent, LoginForm, RegisterForm],
+  imports: [WelcomeContent, LoginForm, RegisterForm],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
