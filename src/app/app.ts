@@ -20,6 +20,7 @@ export class App implements OnInit {
   activeTab = signal<'login' | 'register' | 'auth' | 'admin' | 'forgot-password' | 'reset-password'>('login');
   message = signal<string>('');
   errorMessage = signal<string>('');
+  userName = signal<string>('');
 
   resetToken: string | null = null;
   resetEmail: string | null = null;
@@ -45,10 +46,13 @@ export class App implements OnInit {
         this.axios.setAuthToken(savedToken);
         this.axios.request('GET', '/me', {})
           .then((response) => {
-            if (response.data && response.data.userType === 'Super Admin') {
-              this.activeTab.set('admin');
-            } else {
-              this.activeTab.set('auth');
+            if (response.data) {
+              this.userName.set(response.data.name || '');
+              if (response.data.userType === 'Super Admin') {
+                this.activeTab.set('admin');
+              } else {
+                this.activeTab.set('auth');
+              }
             }
           })
           .catch((error) => {
@@ -82,10 +86,13 @@ export class App implements OnInit {
         }
         this.message.set('Login successful!');
         
-        if (response.data && response.data.userType === 'Super Admin') {
-          this.activeTab.set('admin');
-        } else {
-          this.activeTab.set('auth');
+        if (response.data) {
+          this.userName.set(response.data.name || '');
+          if (response.data.userType === 'Super Admin') {
+            this.activeTab.set('admin');
+          } else {
+            this.activeTab.set('auth');
+          }
         }
       })
       .catch((error) => {
@@ -95,7 +102,7 @@ export class App implements OnInit {
       });
   }
 
-  handleRegister(input: { email: string; password: string; confirmPassword: string }): void {
+  handleRegister(input: { name: string; email: string; password: string; confirmPassword: string }): void {
     this.message.set('');
     this.errorMessage.set('');
     this.axios.request('POST', '/register', input)
@@ -105,10 +112,13 @@ export class App implements OnInit {
         }
         this.message.set('Registration successful! You are now logged in.');
         
-        if (response.data && response.data.userType === 'Super Admin') {
-          this.activeTab.set('admin');
-        } else {
-          this.activeTab.set('auth');
+        if (response.data) {
+          this.userName.set(response.data.name || '');
+          if (response.data.userType === 'Super Admin') {
+            this.activeTab.set('admin');
+          } else {
+            this.activeTab.set('auth');
+          }
         }
       })
       .catch((error) => {

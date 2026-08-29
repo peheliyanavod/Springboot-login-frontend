@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ThemeService, ThemePreset } from '../theme.service';
 
@@ -10,5 +10,6 @@ import { ThemeService, ThemePreset } from '../theme.service';
   styleUrl: './welcome-content.css',
 })
 export class WelcomeContent {
+  @Input() userName: string = '';
   constructor(public themeService: ThemeService) {}
 }

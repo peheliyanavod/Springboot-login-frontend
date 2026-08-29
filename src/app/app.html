@@ -48,7 +48,7 @@
       </app-register-form>
     } @else if (activeTab() === 'auth') {
       <div class="authenticated-view">
-        <app-welcome-content></app-welcome-content>
+        <app-welcome-content [userName]="userName()"></app-welcome-content>
       </div>
     } @else if (activeTab() === 'admin') {
       <app-admin-dashboard></app-admin-dashboard>

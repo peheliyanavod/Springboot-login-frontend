@@ -10,8 +10,10 @@ import { FormsModule } from '@angular/forms';
 })
 export class RegisterForm {
   @Input() serverError: string = '';
-  @Output() onSubmitEventRegister = new EventEmitter<{ email: string; password: string; confirmPassword: string }>();
+  @Output() onSubmitEventRegister = new EventEmitter<{ name: string; email: string; password: string; confirmPassword: string }>();
   @Output() onSwitchToLogin = new EventEmitter<void>();
+
+  name: string = '';
 
   email: string = '';
   password: string = '';
@@ -29,6 +31,10 @@ export class RegisterForm {
   }
 
   onSubmit(): void {
+    if (this.name.trim() === '' ) {
+      this.errorMessage = 'Name is required';
+      return;
+    }
     if (this.email.trim() === '' ) {
       this.errorMessage = 'Email is required';
       return;
@@ -42,7 +48,7 @@ export class RegisterForm {
       return;
     }
     this.errorMessage = '';
-    this.onSubmitEventRegister.emit({ email: this.email, password: this.password, confirmPassword: this.confirmPassword });
+    this.onSubmitEventRegister.emit({ name: this.name, email: this.email, password: this.password, confirmPassword: this.confirmPassword });
   }
 
   switchToLogin(event: Event): void {

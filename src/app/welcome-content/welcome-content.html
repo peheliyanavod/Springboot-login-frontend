@@ -7,7 +7,11 @@
       </svg>
     </div>
     <h2 class="welcome-title">Authentication Successful</h2>
-    <p class="welcome-subtitle">Welcome to your secure dashboard area.</p>
+    @if (userName) {
+      <p class="welcome-subtitle">Welcome to your secure dashboard area, {{ userName }}!</p>
+    } @else {
+      <p class="welcome-subtitle">Welcome to your secure dashboard area.</p>
+    }
     
     <div class="stats-container">
       <div class="stat-box">
