@@ -7,10 +7,16 @@
   </div>
 
   @if (successMessage) {
-    <div class="alert alert-success">{{ successMessage }}</div>
+    <div class="alert alert-success">
+      {{ successMessage }}
+      <button class="alert-close-btn" (click)="successMessage = ''" aria-label="Close message">&times;</button>
+    </div>
   }
   @if (errorMessage) {
-    <div class="alert alert-danger">{{ errorMessage }}</div>
+    <div class="alert alert-danger">
+      {{ errorMessage }}
+      <button class="alert-close-btn" (click)="errorMessage = ''" aria-label="Close message">&times;</button>
+    </div>
   }
 
   <div class="dashboard-grid">

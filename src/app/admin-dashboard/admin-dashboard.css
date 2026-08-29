@@ -12,6 +12,52 @@
   border-bottom: 1px solid var(--border-color);
 }
 
+.alert {
+  padding-right: 2.5rem; /* Space for close button */
+  position: relative; /* For absolute positioning of close button */
+  /* Other alert styling from app.css */
+  width: 100%;
+  padding: 0.875rem 1.25rem;
+  padding-right: 2.5rem;
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  margin-bottom: 1.25rem;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+.alert-success {
+  background-color: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #065f46;
+}
+.alert-danger {
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+}
+.alert-close-btn {
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+  padding: 0;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.alert-close-btn:hover {
+  opacity: 1;
+}
+
 .dashboard-title {
   font-size: 1.75rem;
   font-weight: 700;
