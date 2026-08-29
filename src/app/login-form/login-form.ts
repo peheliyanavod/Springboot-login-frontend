@@ -16,6 +16,11 @@ export class LoginForm {
 
   username: string = '';
   password: string = '';
+  showPassword: boolean = false;
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
 
   onSubmit(): void {
     this.onSubmitEventLogin.emit({ username: this.username, password: this.password });

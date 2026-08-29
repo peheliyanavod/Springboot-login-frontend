@@ -16,6 +16,16 @@ export class ResetPasswordForm {
   password: string = '';
   confirmPassword: string = '';
   localError: string = '';
+  showPassword: boolean = false;
+  showConfirmPassword: boolean = false;
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  toggleConfirmPasswordVisibility(): void {
+    this.showConfirmPassword = !this.showConfirmPassword;
+  }
 
   onSubmit(): void {
     if (this.password !== this.confirmPassword) {

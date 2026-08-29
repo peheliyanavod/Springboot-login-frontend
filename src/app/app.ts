@@ -5,6 +5,7 @@ import { RegisterForm } from "./register-form/register-form";
 import { ForgotPasswordForm } from "./forgot-password-form/forgot-password-form";
 import { ResetPasswordForm } from "./reset-password-form/reset-password-form";
 import { Axios } from './axios';
+import { ThemeService } from './theme.service';
 
 @Component({
   selector: 'app-root',
@@ -22,9 +23,10 @@ export class App implements OnInit {
   resetToken: string | null = null;
   resetEmail: string | null = null;
 
-  constructor(private axios: Axios) {}
+  constructor(private axios: Axios, private themeService: ThemeService) {}
 
   ngOnInit() {
+    this.themeService.initTheme();
     if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
       const token = urlParams.get('token');

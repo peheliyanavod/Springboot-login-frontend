@@ -1,5 +1,5 @@
 <div class="welcome-dashboard">
-  <div class="welcome-card glass-effect">
+  <div class="welcome-card">
     <div class="welcome-icon">
       <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
@@ -17,6 +17,39 @@
       <div class="stat-box">
         <span class="stat-value">Secured</span>
         <span class="stat-label">Connection</span>
+      </div>
+    </div>
+    
+    <div class="theme-settings-panel">
+      <h3 class="theme-panel-title">Theme Personalization</h3>
+      
+      <div class="theme-setting-row">
+        <span class="setting-label">Accent Color</span>
+        <div class="color-swatches">
+          @for (preset of themeService.presets; track preset.name) {
+            <button 
+              class="color-swatch" 
+              [style.backgroundColor]="preset.primary"
+              [class.active]="themeService.currentPreset.name === preset.name"
+              (click)="themeService.setPreset(preset.name)"
+              [title]="preset.name"
+              aria-label="Set theme to {{ preset.name }}">
+              @if (themeService.currentPreset.name === preset.name) {
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              }
+            </button>
+          }
+        </div>
+      </div>
+      
+      <div class="theme-setting-row">
+        <span class="setting-label">Dark Mode</span>
+        <label class="switch">
+          <input type="checkbox" [checked]="themeService.isDarkMode" (change)="themeService.toggleDarkMode()">
+          <span class="slider round"></span>
+        </label>
       </div>
     </div>
     
