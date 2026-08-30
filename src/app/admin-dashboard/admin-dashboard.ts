@@ -15,6 +15,7 @@ export class AdminDashboard implements OnInit {
   users: UserDto[] = [];
   errorMessage: string = '';
   successMessage: string = '';
+  activeMenu: string = 'users';
 
   // System Logs state
   systemLogs: SystemLogDto[] = [];
@@ -40,6 +41,10 @@ export class AdminDashboard implements OnInit {
   ngOnInit() {
     this.fetchUsers();
     this.fetchSystemLogs();
+  }
+
+  setActiveMenu(menu: string) {
+    this.activeMenu = menu;
   }
 
   fetchUsers() {

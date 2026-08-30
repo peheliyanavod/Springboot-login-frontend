@@ -19,142 +19,164 @@
     </div>
   }
 
-  <div class="dashboard-grid">
-    <!-- Users List Section -->
-    <div class="dashboard-card users-card">
-      <h3 class="card-title">User Management</h3>
-      <div class="table-responsive">
-        <table class="users-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Email</th>
-              <th>Role</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (user of users; track user.id) {
-              <tr>
-                <td>{{ user.id }}</td>
-                <td>{{ user.email }}</td>
-                <td>
-                  <span class="role-badge" [class.super-admin]="user.userType === 'Super Admin'">
-                    {{ user.userType }}
-                  </span>
-                </td>
-                <td>
-                  <span class="status-badge" [class.active]="user.status === 'Active'" [class.inactive]="user.status === 'Inactive'">
-                    {{ user.status }}
-                  </span>
-                </td>
-                <td>
-                  <button 
-                    class="btn-toggle" 
-                    [class.btn-deactivate]="user.status === 'Active'"
-                    [class.btn-activate]="user.status === 'Inactive'"
-                    [disabled]="user.userType === 'Super Admin'"
-                    [style.opacity]="user.userType === 'Super Admin' ? '0.5' : '1'"
-                    [style.cursor]="user.userType === 'Super Admin' ? 'not-allowed' : 'pointer'"
-                    (click)="toggleUserStatus(user)">
-                    {{ user.status === 'Active' ? 'Deactivate' : 'Activate' }}
-                  </button>
-                </td>
-              </tr>
-            } @empty {
-              <tr>
-                <td colspan="5" class="text-center">No users found.</td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
-    </div>
+  <div class="dashboard-layout">
+    <aside class="dashboard-sidebar">
+      <nav class="dashboard-menu">
+        <button class="menu-item" [class.active]="activeMenu === 'users'" (click)="setActiveMenu('users')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          User Management
+        </button>
+        <button class="menu-item" [class.active]="activeMenu === 'logs'" (click)="setActiveMenu('logs')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+          System Logs
+        </button>
+        <button class="menu-item" [class.active]="activeMenu === 'theme'" (click)="setActiveMenu('theme')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>
+          Theme Settings
+        </button>
+      </nav>
+    </aside>
 
-    <!-- Theme Settings Section (Same as Welcome Content) -->
-    <div class="dashboard-card theme-card">
-      <div class="theme-settings-panel">
-        <h3 class="theme-panel-title">Theme Personalization</h3>
-        
-        <div class="theme-setting-row">
-          <span class="setting-label">Accent Color</span>
-          <div class="color-swatches">
-            @for (preset of themeService.presets; track preset.name) {
-              <button 
-                class="color-swatch" 
-                [style.backgroundColor]="preset.primary"
-                [class.active]="themeService.currentPreset.name === preset.name"
-                (click)="themeService.setPreset(preset.name)"
-                [title]="preset.name"
-                aria-label="Set theme to {{ preset.name }}">
-                @if (themeService.currentPreset.name === preset.name) {
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                  </svg>
+    <div class="dashboard-main">
+      @if (activeMenu === 'users') {
+        <div class="dashboard-card users-card fade-in">
+          <h3 class="card-title">User Management</h3>
+          <div class="table-responsive">
+            <table class="users-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (user of users; track user.id) {
+                  <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                      <span class="role-badge" [class.super-admin]="user.userType === 'Super Admin'">
+                        {{ user.userType }}
+                      </span>
+                    </td>
+                    <td>
+                      <span class="status-badge" [class.active]="user.status === 'Active'" [class.inactive]="user.status === 'Inactive'">
+                        {{ user.status }}
+                      </span>
+                    </td>
+                    <td>
+                      <button 
+                        class="btn-toggle" 
+                        [class.btn-deactivate]="user.status === 'Active'"
+                        [class.btn-activate]="user.status === 'Inactive'"
+                        [disabled]="user.userType === 'Super Admin'"
+                        [style.opacity]="user.userType === 'Super Admin' ? '0.5' : '1'"
+                        [style.cursor]="user.userType === 'Super Admin' ? 'not-allowed' : 'pointer'"
+                        (click)="toggleUserStatus(user)">
+                        {{ user.status === 'Active' ? 'Deactivate' : 'Activate' }}
+                      </button>
+                    </td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="5" class="text-center">No users found.</td>
+                  </tr>
                 }
-              </button>
-            }
+              </tbody>
+            </table>
           </div>
         </div>
-        
-        <div class="theme-setting-row">
-          <span class="setting-label">Dark Mode</span>
-          <label class="switch">
-            <input type="checkbox" [checked]="themeService.isDarkMode" (change)="themeService.toggleDarkMode()">
-            <span class="slider round"></span>
-          </label>
-        </div>
-      </div>
-    </div>
-  </div>
+      }
 
-  <!-- System Logs Section -->
-  <div class="dashboard-card logs-card">
-    <h3 class="card-title">System Logs</h3>
-    <div class="table-responsive">
-      <table class="users-table logs-table">
-        <thead>
-          <tr>
-            <th>
-              User Name
-              <input type="text" class="filter-input" placeholder="Filter by User..." [value]="filterUserName" (input)="onFilterChange($event, 'userName')">
-            </th>
-            <th>
-              IP Address
-              <input type="text" class="filter-input" placeholder="Filter by IP..." [value]="filterIpAddress" (input)="onFilterChange($event, 'ipAddress')">
-            </th>
-            <th>
-              Date / Time
-              <input type="text" class="filter-input" placeholder="Filter by date..." [value]="filterDate" (input)="onFilterChange($event, 'dateFilter')">
-            </th>
-            <th>
-              Log Message
-              <input type="text" class="filter-input" placeholder="Filter by message..." [value]="filterLogMessage" (input)="onFilterChange($event, 'logMessage')">
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (log of systemLogs; track log.id) {
-            <tr>
-              <td>{{ log.userName }}</td>
-              <td>{{ log.ipAddress }}</td>
-              <td>{{ log.dateTime | date:'medium' }}</td>
-              <td>{{ log.log }}</td>
-            </tr>
-          } @empty {
-            <tr>
-              <td colspan="4" class="text-center">No system logs found.</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-    
-    <div class="pagination-controls">
-      <button class="btn-pagination" [disabled]="logsCurrentPage === 0" (click)="prevPage()">Previous</button>
-      <span class="page-info">Page {{ logsTotalPages > 0 ? logsCurrentPage + 1 : 0 }} of {{ logsTotalPages }}</span>
-      <button class="btn-pagination" [disabled]="logsCurrentPage >= logsTotalPages - 1 || logsTotalPages === 0" (click)="nextPage()">Next</button>
+      @if (activeMenu === 'theme') {
+        <div class="dashboard-card theme-card fade-in">
+          <div class="theme-settings-panel">
+            <h3 class="theme-panel-title">Theme Personalization</h3>
+            
+            <div class="theme-setting-row">
+              <span class="setting-label">Accent Color</span>
+              <div class="color-swatches">
+                @for (preset of themeService.presets; track preset.name) {
+                  <button 
+                    class="color-swatch" 
+                    [style.backgroundColor]="preset.primary"
+                    [class.active]="themeService.currentPreset.name === preset.name"
+                    (click)="themeService.setPreset(preset.name)"
+                    [title]="preset.name"
+                    aria-label="Set theme to {{ preset.name }}">
+                    @if (themeService.currentPreset.name === preset.name) {
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    }
+                  </button>
+                }
+              </div>
+            </div>
+            
+            <div class="theme-setting-row">
+              <span class="setting-label">Dark Mode</span>
+              <label class="switch">
+                <input type="checkbox" [checked]="themeService.isDarkMode" (change)="themeService.toggleDarkMode()">
+                <span class="slider round"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      }
+
+      @if (activeMenu === 'logs') {
+        <div class="dashboard-card logs-card fade-in">
+          <h3 class="card-title">System Logs</h3>
+          <div class="table-responsive">
+            <table class="users-table logs-table">
+              <thead>
+                <tr>
+                  <th>
+                    User Name
+                    <input type="text" class="filter-input" placeholder="Filter by User..." [value]="filterUserName" (input)="onFilterChange($event, 'userName')">
+                  </th>
+                  <th>
+                    IP Address
+                    <input type="text" class="filter-input" placeholder="Filter by IP..." [value]="filterIpAddress" (input)="onFilterChange($event, 'ipAddress')">
+                  </th>
+                  <th>
+                    Date / Time
+                    <input type="text" class="filter-input" placeholder="Filter by date..." [value]="filterDate" (input)="onFilterChange($event, 'dateFilter')">
+                  </th>
+                  <th>
+                    Log Message
+                    <input type="text" class="filter-input" placeholder="Filter by message..." [value]="filterLogMessage" (input)="onFilterChange($event, 'logMessage')">
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (log of systemLogs; track log.id) {
+                  <tr>
+                    <td>{{ log.userName }}</td>
+                    <td>{{ log.ipAddress }}</td>
+                    <td>{{ log.dateTime | date:'medium' }}</td>
+                    <td>{{ log.log }}</td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="4" class="text-center">No system logs found.</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="pagination-controls">
+            <button class="btn-pagination" [disabled]="logsCurrentPage === 0" (click)="prevPage()">Previous</button>
+            <span class="page-info">Page {{ logsTotalPages > 0 ? logsCurrentPage + 1 : 0 }} of {{ logsTotalPages }}</span>
+            <button class="btn-pagination" [disabled]="logsCurrentPage >= logsTotalPages - 1 || logsTotalPages === 0" (click)="nextPage()">Next</button>
+          </div>
+        </div>
+      }
     </div>
   </div>
 </div>
