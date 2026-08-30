@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-login-form',
@@ -10,12 +11,18 @@ import { FormsModule } from '@angular/forms';
 })
 export class LoginForm {
   @Input() serverError: string = '';
+  @Input() isMfaStep: boolean = false;
+  
+  backendUrl = environment.backendUrl;
+  
   @Output() onSubmitEventLogin = new EventEmitter<{ username: string; password: string }>();
+  @Output() onSubmitEventMfa = new EventEmitter<string>();
   @Output() onSwitchToRegister = new EventEmitter<void>();
   @Output() onSwitchToForgotPassword = new EventEmitter<void>();
 
   username: string = '';
   password: string = '';
+  mfaCode: string = '';
   showPassword: boolean = false;
 
   togglePasswordVisibility(): void {
@@ -23,7 +30,11 @@ export class LoginForm {
   }
 
   onSubmit(): void {
-    this.onSubmitEventLogin.emit({ username: this.username, password: this.password });
+    if (this.isMfaStep) {
+      this.onSubmitEventMfa.emit(this.mfaCode);
+    } else {
+      this.onSubmitEventLogin.emit({ username: this.username, password: this.password });
+    }
   }
 
   switchToRegister(event: Event): void {

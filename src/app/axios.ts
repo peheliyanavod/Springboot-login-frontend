@@ -62,6 +62,22 @@ export class Axios {
     });
   }
 
+  verifyEmail(token: string): Promise<any> {
+    return this.request('POST', `/verify-email?token=${token}`);
+  }
+
+  verifyMfa(mfaToken: string, code: string): Promise<any> {
+    return this.request('POST', '/mfa/verify', { mfaToken, code });
+  }
+
+  setupMfa(): Promise<any> {
+    return this.request('POST', '/mfa/setup', {});
+  }
+
+  verifyMfaSetup(code: string): Promise<any> {
+    return this.request('POST', '/mfa/verify-setup', { code });
+  }
+
   request(method: string, url: string, data?: any) {
     let headers: any = {
       'Content-Type': 'application/json'

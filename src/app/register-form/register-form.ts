@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-register-form',
@@ -10,6 +11,8 @@ import { FormsModule } from '@angular/forms';
 })
 export class RegisterForm {
   @Input() serverError: string = '';
+  
+  backendUrl = environment.backendUrl;
   @Output() onSubmitEventRegister = new EventEmitter<{ name: string; email: string; password: string; confirmPassword: string }>();
   @Output() onSwitchToLogin = new EventEmitter<void>();
 

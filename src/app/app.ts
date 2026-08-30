@@ -7,17 +7,18 @@ import { ResetPasswordForm } from "./reset-password-form/reset-password-form";
 import { AdminDashboard } from "./admin-dashboard/admin-dashboard";
 import { Axios } from './axios';
 import { ThemeService } from './theme.service';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [WelcomeContent, LoginForm, RegisterForm, ForgotPasswordForm, ResetPasswordForm, AdminDashboard],
+  imports: [WelcomeContent, LoginForm, RegisterForm, ForgotPasswordForm, ResetPasswordForm, AdminDashboard, RouterModule],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App implements OnInit {
   protected readonly title = signal('frontend');
-  activeTab = signal<'login' | 'register' | 'auth' | 'admin' | 'forgot-password' | 'reset-password'>('login');
+  activeTab = signal<'login' | 'register' | 'auth' | 'admin' | 'forgot-password' | 'reset-password' | 'router'>('login');
   message = signal<string>('');
   errorMessage = signal<string>('');
   userName = signal<string>('');
@@ -38,6 +39,26 @@ export class App implements OnInit {
         this.resetEmail = email;
         this.activeTab.set('reset-password');
         return;
+      }
+
+      const tab = urlParams.get('tab');
+      const verified = urlParams.get('verified');
+
+      if (verified === 'true') {
+        this.message.set('Email verified successfully! You can now log in.');
+      }
+
+      if (tab === 'register') {
+        this.activeTab.set('register');
+        window.history.replaceState({}, document.title, '/');
+      } else if (tab === 'login') {
+        this.activeTab.set('login');
+        window.history.replaceState({}, document.title, '/');
+      }
+
+      if (window.location.pathname !== '/' && window.location.pathname !== '/register' && window.location.pathname !== '/login') {
+        this.activeTab.set('router');
+        return; // Let Angular Router handle it
       }
 
       // Check if session token exists
@@ -67,6 +88,8 @@ export class App implements OnInit {
   showLogin(): void {
     this.message.set('');
     this.errorMessage.set('');
+    this.mfaStep.set(false);
+    this.mfaToken.set('');
     this.activeTab.set('login');
   }
 
@@ -76,11 +99,21 @@ export class App implements OnInit {
     this.activeTab.set('register');
   }
 
+  mfaStep = signal<boolean>(false);
+  mfaToken = signal<string>('');
+
   handleLogin(input: { username: string; password: string }): void {
     this.message.set('');
     this.errorMessage.set('');
     this.axios.request('POST', '/login', { email: input.username, password: input.password })
       .then((response) => {
+        if (response.data && response.data.mfaRequired) {
+          this.mfaStep.set(true);
+          this.mfaToken.set(response.data.mfaToken);
+          this.message.set('Please enter your 6-digit Authenticator code.');
+          return;
+        }
+
         if (response.data && response.data.token) {
           this.axios.setAuthToken(response.data.token);
         }
@@ -97,20 +130,22 @@ export class App implements OnInit {
       })
       .catch((error) => {
         console.error('Login error:', error);
-        const msg = error.response?.data?.message || 'Login failed. Invalid email or password.';
+        const msg = error.response?.data?.message || error.response?.data || 'Login failed. Invalid email or password.';
         this.errorMessage.set(msg);
       });
   }
 
-  handleRegister(input: { name: string; email: string; password: string; confirmPassword: string }): void {
+  handleVerifyMfa(code: string): void {
     this.message.set('');
     this.errorMessage.set('');
-    this.axios.request('POST', '/register', input)
+    this.axios.verifyMfa(this.mfaToken(), code)
       .then((response) => {
         if (response.data && response.data.token) {
           this.axios.setAuthToken(response.data.token);
         }
-        this.message.set('Registration successful! You are now logged in.');
+        this.mfaStep.set(false);
+        this.mfaToken.set('');
+        this.message.set('Login successful!');
         
         if (response.data) {
           this.userName.set(response.data.name || '');
@@ -120,6 +155,20 @@ export class App implements OnInit {
             this.activeTab.set('auth');
           }
         }
+      })
+      .catch((error) => {
+        console.error('MFA error:', error);
+        this.errorMessage.set('Invalid Authenticator code.');
+      });
+  }
+
+  handleRegister(input: { name: string; email: string; password: string; confirmPassword: string }): void {
+    this.message.set('');
+    this.errorMessage.set('');
+    this.axios.request('POST', '/register', input)
+      .then((response) => {
+        this.message.set('Registration successful! Please check your email to verify your account before logging in.');
+        this.activeTab.set('login');
       })
       .catch((error) => {
         console.error('Register error:', error);

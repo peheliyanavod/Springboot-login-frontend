@@ -23,7 +23,9 @@
     @if (activeTab() === 'login') {
       <app-login-form 
         [serverError]="errorMessage()"
+        [isMfaStep]="mfaStep()"
         (onSubmitEventLogin)="handleLogin($event)"
+        (onSubmitEventMfa)="handleVerifyMfa($event)"
         (onSwitchToRegister)="showRegister()"
         (onSwitchToForgotPassword)="showForgotPassword()">
       </app-login-form>
@@ -52,6 +54,8 @@
       </div>
     } @else if (activeTab() === 'admin') {
       <app-admin-dashboard></app-admin-dashboard>
+    } @else if (activeTab() === 'router') {
+      <router-outlet></router-outlet>
     }
   </main>
 </div>
