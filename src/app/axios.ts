@@ -28,6 +28,15 @@ export class Axios {
     }
   }
 
+  logout(): Promise<any> {
+    return this.request('POST', '/logout', {}).finally(() => {
+      this.setAuthToken(null);
+      if (typeof window !== 'undefined') {
+        window.location.href = '/login';
+      }
+    });
+  }
+
   request(method: string, url: string, data?: any) {
     let headers: any = {
       'Content-Type': 'application/json'
