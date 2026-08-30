@@ -9,6 +9,31 @@ export class Axios {
   constructor() {
     axios.defaults.baseURL = environment.backendUrl;
     axios.defaults.headers.post['Content-Type'] = 'application/json';
+    axios.defaults.withCredentials = true;
+
+    axios.interceptors.response.use(
+      (response) => response,
+      async (error) => {
+        const originalRequest = error.config;
+        if (error.response && error.response.status === 401 && !originalRequest._retry && originalRequest.url !== '/refresh') {
+          originalRequest._retry = true;
+          try {
+            const res = await axios.post('/refresh', {}, { withCredentials: true });
+            if (res.data && res.data.token) {
+              this.setAuthToken(res.data.token);
+              originalRequest.headers['Authorization'] = `Bearer ${res.data.token}`;
+              return axios(originalRequest);
+            }
+          } catch (err) {
+            this.setAuthToken(null);
+            if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
+              window.location.href = '/login';
+            }
+          }
+        }
+        return Promise.reject(error);
+      }
+    );
   }
 
   getAuthToken(): string | null {
