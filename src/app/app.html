@@ -12,13 +12,9 @@
     }
   </header>
 
+  <app-toast></app-toast>
+
   <main class="main-content">
-    @if (message()) {
-      <div class="alert alert-success">
-        {{ message() }}
-        <button class="alert-close-btn" (click)="message.set('')" aria-label="Close message">&times;</button>
-      </div>
-    }
 
     @if (activeTab() === 'login') {
       <app-login-form 

@@ -425,9 +425,83 @@ input:checked + .slider:before {
 }
 
 .btn-pagination:disabled {
-  background-color: #cbd5e1;
+  background-color: #f1f5f9;
+  color: #94a3b8;
+  border-color: #e2e8f0;
   cursor: not-allowed;
-  opacity: 0.7;
+}
+
+/* UX Polish: Skeleton Loaders */
+.skeleton-text {
+  height: 16px;
+  background-color: #e2e8f0;
+  border-radius: 4px;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 0.3; }
+  100% { opacity: 0.6; }
+}
+
+/* UX Polish: Empty States */
+.empty-state-cell {
+  padding: 3rem !important;
+  text-align: center;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+}
+
+.empty-icon {
+  color: #cbd5e1;
+  margin-bottom: 1rem;
+}
+
+.empty-state h4 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin: 0 0 0.5rem;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+/* UX Polish: Micro Animations */
+.hover-row {
+  transition: all 0.2s ease;
+}
+
+.hover-row:hover {
+  background-color: #f8fafc;
+  transform: scale(1.002);
+}
+
+.active-scale:active {
+  transform: scale(0.95);
+}
+
+.spinner-small {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 .page-info {

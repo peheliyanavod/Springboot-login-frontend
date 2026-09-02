@@ -8,11 +8,13 @@ import { AdminDashboard } from "./admin-dashboard/admin-dashboard";
 import { Axios } from './axios';
 import { ThemeService } from './theme.service';
 import { RouterModule } from '@angular/router';
+import { ToastComponent } from './toast/toast';
+import { ToastService } from './toast.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [WelcomeContent, LoginForm, RegisterForm, ForgotPasswordForm, ResetPasswordForm, AdminDashboard, RouterModule],
+  imports: [WelcomeContent, LoginForm, RegisterForm, ForgotPasswordForm, ResetPasswordForm, AdminDashboard, RouterModule, ToastComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
@@ -26,7 +28,7 @@ export class App implements OnInit {
   resetToken: string | null = null;
   resetEmail: string | null = null;
 
-  constructor(private axios: Axios, private themeService: ThemeService) {}
+  constructor(private axios: Axios, private themeService: ThemeService, private toastService: ToastService) {}
 
   ngOnInit() {
     this.themeService.initTheme();
@@ -45,7 +47,7 @@ export class App implements OnInit {
       const verified = urlParams.get('verified');
 
       if (verified === 'true') {
-        this.message.set('Email verified successfully! You can now log in.');
+        this.toastService.success('Email verified successfully! You can now log in.');
       }
 
       if (tab === 'register') {
@@ -102,7 +104,7 @@ export class App implements OnInit {
   mfaStep = signal<boolean>(false);
   mfaToken = signal<string>('');
 
-  handleLogin(input: { username: string; password: string }): void {
+  handleLogin(input: { username: string; password: string; rememberMe: boolean }): void {
     this.message.set('');
     this.errorMessage.set('');
     this.axios.request('POST', '/login', { email: input.username, password: input.password })
@@ -110,14 +112,14 @@ export class App implements OnInit {
         if (response.data && response.data.mfaRequired) {
           this.mfaStep.set(true);
           this.mfaToken.set(response.data.mfaToken);
-          this.message.set('Please enter your 6-digit Authenticator code.');
+          this.toastService.info('Please enter your 6-digit Authenticator code.');
           return;
         }
 
         if (response.data && response.data.token) {
-          this.axios.setAuthToken(response.data.token);
+          this.axios.setAuthToken(response.data.token, input.rememberMe);
         }
-        this.message.set('Login successful!');
+        this.toastService.success('Login successful!');
         
         if (response.data) {
           this.userName.set(response.data.name || '');
@@ -145,7 +147,7 @@ export class App implements OnInit {
         }
         this.mfaStep.set(false);
         this.mfaToken.set('');
-        this.message.set('Login successful!');
+        this.toastService.success('Login successful!');
         
         if (response.data) {
           this.userName.set(response.data.name || '');
@@ -167,7 +169,7 @@ export class App implements OnInit {
     this.errorMessage.set('');
     this.axios.request('POST', '/register', input)
       .then((response) => {
-        this.message.set('Registration successful! Please check your email to verify your account before logging in.');
+        this.toastService.success('Registration successful! Please check your email to verify your account before logging in.', 5000);
         this.activeTab.set('login');
       })
       .catch((error) => {
@@ -179,7 +181,7 @@ export class App implements OnInit {
 
   logout(): void {
     this.axios.setAuthToken(null);
-    this.message.set('Logged out successfully.');
+    this.toastService.success('Logged out successfully.');
     this.activeTab.set('login');
   }
 
@@ -194,7 +196,7 @@ export class App implements OnInit {
     this.errorMessage.set('');
     this.axios.request('POST', '/forgot-password', input)
       .then((response) => {
-        this.message.set(response.data || 'Password reset link sent.');
+        this.toastService.success(response.data || 'Password reset link sent.');
       })
       .catch((error) => {
         console.error('Forgot password error:', error);
@@ -217,7 +219,7 @@ export class App implements OnInit {
       newPassword: input.password
     })
       .then((response) => {
-        this.message.set('Password has been successfully reset. You can now login.');
+        this.toastService.success('Password has been successfully reset. You can now login.');
         this.resetToken = null;
         this.resetEmail = null;
         this.activeTab.set('login');

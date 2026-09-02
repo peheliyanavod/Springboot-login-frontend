@@ -6,18 +6,7 @@
     </div>
   </div>
 
-  @if (successMessage) {
-    <div class="alert alert-success">
-      {{ successMessage }}
-      <button class="alert-close-btn" (click)="successMessage = ''" aria-label="Close message">&times;</button>
-    </div>
-  }
-  @if (errorMessage) {
-    <div class="alert alert-danger">
-      {{ errorMessage }}
-      <button class="alert-close-btn" (click)="errorMessage = ''" aria-label="Close message">&times;</button>
-    </div>
-  }
+
 
   <div class="dashboard-layout">
     <aside class="dashboard-sidebar">
@@ -53,37 +42,59 @@
                 </tr>
               </thead>
               <tbody>
-                @for (user of users; track user.id) {
-                  <tr>
-                    <td>{{ user.id }}</td>
-                    <td>{{ user.email }}</td>
-                    <td>
-                      <span class="role-badge" [class.super-admin]="user.userType === 'Super Admin'">
-                        {{ user.userType }}
-                      </span>
-                    </td>
-                    <td>
-                      <span class="status-badge" [class.active]="user.status === 'Active'" [class.inactive]="user.status === 'Inactive'">
-                        {{ user.status }}
-                      </span>
-                    </td>
-                    <td>
-                      <button 
-                        class="btn-toggle" 
-                        [class.btn-deactivate]="user.status === 'Active'"
-                        [class.btn-activate]="user.status === 'Inactive'"
-                        [disabled]="user.userType === 'Super Admin'"
-                        [style.opacity]="user.userType === 'Super Admin' ? '0.5' : '1'"
-                        [style.cursor]="user.userType === 'Super Admin' ? 'not-allowed' : 'pointer'"
-                        (click)="toggleUserStatus(user)">
-                        {{ user.status === 'Active' ? 'Deactivate' : 'Activate' }}
-                      </button>
-                    </td>
-                  </tr>
-                } @empty {
-                  <tr>
-                    <td colspan="5" class="text-center">No users found.</td>
-                  </tr>
+                @if (isLoadingUsers) {
+                  @for (i of [1, 2, 3, 4, 5]; track i) {
+                    <tr>
+                      <td><div class="skeleton-text" style="width: 30px;"></div></td>
+                      <td><div class="skeleton-text" style="width: 150px;"></div></td>
+                      <td><div class="skeleton-text" style="width: 80px;"></div></td>
+                      <td><div class="skeleton-text" style="width: 60px;"></div></td>
+                      <td><div class="skeleton-text" style="width: 90px; height: 32px; border-radius: 4px;"></div></td>
+                    </tr>
+                  }
+                } @else {
+                  @for (user of users; track user.id) {
+                    <tr class="hover-row">
+                      <td>{{ user.id }}</td>
+                      <td>{{ user.email }}</td>
+                      <td>
+                        <span class="role-badge" [class.super-admin]="user.userType === 'Super Admin'">
+                          {{ user.userType }}
+                        </span>
+                      </td>
+                      <td>
+                        <span class="status-badge" [class.active]="user.status === 'Active'" [class.inactive]="user.status === 'Inactive'">
+                          {{ user.status }}
+                        </span>
+                      </td>
+                      <td>
+                        <button 
+                          class="btn-toggle active-scale" 
+                          [class.btn-deactivate]="user.status === 'Active'"
+                          [class.btn-activate]="user.status === 'Inactive'"
+                          [disabled]="user.userType === 'Super Admin' || updatingUserIds.has(user.id)"
+                          [style.opacity]="(user.userType === 'Super Admin' || updatingUserIds.has(user.id)) ? '0.5' : '1'"
+                          [style.cursor]="(user.userType === 'Super Admin' || updatingUserIds.has(user.id)) ? 'not-allowed' : 'pointer'"
+                          (click)="toggleUserStatus(user)">
+                          @if (updatingUserIds.has(user.id)) {
+                            <span class="spinner-small"></span>
+                          } @else {
+                            {{ user.status === 'Active' ? 'Deactivate' : 'Activate' }}
+                          }
+                        </button>
+                      </td>
+                    </tr>
+                  } @empty {
+                    <tr>
+                      <td colspan="5" class="empty-state-cell">
+                        <div class="empty-state">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="empty-icon"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                          <h4>No Users Found</h4>
+                          <p>There are no users to display.</p>
+                        </div>
+                      </td>
+                    </tr>
+                  }
                 }
               </tbody>
             </table>
@@ -154,17 +165,34 @@
                 </tr>
               </thead>
               <tbody>
-                @for (log of systemLogs; track log.id) {
-                  <tr>
-                    <td>{{ log.userName }}</td>
-                    <td>{{ log.ipAddress }}</td>
-                    <td>{{ log.dateTime | date:'medium' }}</td>
-                    <td>{{ log.log }}</td>
-                  </tr>
-                } @empty {
-                  <tr>
-                    <td colspan="4" class="text-center">No system logs found.</td>
-                  </tr>
+                @if (isLoadingLogs) {
+                  @for (i of [1, 2, 3, 4, 5]; track i) {
+                    <tr>
+                      <td><div class="skeleton-text" style="width: 100px;"></div></td>
+                      <td><div class="skeleton-text" style="width: 120px;"></div></td>
+                      <td><div class="skeleton-text" style="width: 150px;"></div></td>
+                      <td><div class="skeleton-text" style="width: 250px;"></div></td>
+                    </tr>
+                  }
+                } @else {
+                  @for (log of systemLogs; track log.id) {
+                    <tr class="hover-row">
+                      <td>{{ log.userName }}</td>
+                      <td>{{ log.ipAddress }}</td>
+                      <td>{{ log.dateTime | date:'medium' }}</td>
+                      <td>{{ log.log }}</td>
+                    </tr>
+                  } @empty {
+                    <tr>
+                      <td colspan="4" class="empty-state-cell">
+                        <div class="empty-state">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="empty-icon"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                          <h4>No Logs Found</h4>
+                          <p>There are no system logs matching your filters.</p>
+                        </div>
+                      </td>
+                    </tr>
+                  }
                 }
               </tbody>
             </table>

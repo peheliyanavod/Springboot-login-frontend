@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ThemeService } from '../theme.service';
 import { Axios } from '../axios';
 import { UserDto, SystemLogDto, PageResponse } from '../user.model';
+import { ToastService } from '../toast.service';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -13,12 +14,13 @@ import { UserDto, SystemLogDto, PageResponse } from '../user.model';
 })
 export class AdminDashboard implements OnInit {
   users: UserDto[] = [];
-  errorMessage: string = '';
-  successMessage: string = '';
+  isLoadingUsers: boolean = false;
+  updatingUserIds: Set<number> = new Set();
   activeMenu: string = 'users';
 
   // System Logs state
   systemLogs: SystemLogDto[] = [];
+  isLoadingLogs: boolean = false;
   logsCurrentPage: number = 0;
   logsTotalPages: number = 0;
   logsPageSize: number = 10;
@@ -35,7 +37,8 @@ export class AdminDashboard implements OnInit {
   constructor(
     public themeService: ThemeService, 
     private axios: Axios,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private toastService: ToastService
   ) {}
 
   ngOnInit() {
@@ -48,44 +51,44 @@ export class AdminDashboard implements OnInit {
   }
 
   fetchUsers() {
-    this.errorMessage = '';
+    this.isLoadingUsers = true;
     this.axios.request('GET', '/admin/users', {})
       .then((response) => {
         this.users = response.data;
+        this.isLoadingUsers = false;
         this.cdr.detectChanges();
       })
       .catch((error) => {
         console.error('Error fetching users:', error);
-        this.errorMessage = 'Failed to load users list.';
+        this.toastService.error('Failed to load users list.');
+        this.isLoadingUsers = false;
         this.cdr.detectChanges();
       });
   }
 
   toggleUserStatus(user: UserDto) {
+    if (this.updatingUserIds.has(user.id)) return;
+    this.updatingUserIds.add(user.id);
+    
     const newStatus = user.status === 'Active' ? 'Inactive' : 'Active';
     this.axios.request('PUT', `/admin/users/${user.id}/status`, { status: newStatus })
       .then((response) => {
         user.status = newStatus;
-        this.successMessage = `User status updated to ${newStatus}.`;
+        this.toastService.success(`User status updated to ${newStatus}.`);
+        this.updatingUserIds.delete(user.id);
         this.cdr.detectChanges();
-        setTimeout(() => {
-          this.successMessage = '';
-          this.cdr.detectChanges();
-        }, 3000);
       })
       .catch((error) => {
         console.error('Error updating status:', error);
-        this.errorMessage = 'Failed to update user status.';
+        this.toastService.error('Failed to update user status.');
+        this.updatingUserIds.delete(user.id);
         this.cdr.detectChanges();
-        setTimeout(() => {
-          this.errorMessage = '';
-          this.cdr.detectChanges();
-        }, 3000);
       });
   }
 
   // System Logs Methods
   fetchSystemLogs() {
+    this.isLoadingLogs = true;
     let url = `/admin/logs?page=${this.logsCurrentPage}&size=${this.logsPageSize}`;
     
     if (this.filterUserName) url += `&userName=${encodeURIComponent(this.filterUserName)}`;
@@ -98,10 +101,14 @@ export class AdminDashboard implements OnInit {
         const pageData: PageResponse<SystemLogDto> = response.data;
         this.systemLogs = pageData.content;
         this.logsTotalPages = pageData.totalPages;
+        this.isLoadingLogs = false;
         this.cdr.detectChanges();
       })
       .catch((error) => {
         console.error('Error fetching logs:', error);
+        this.toastService.error('Failed to load system logs.');
+        this.isLoadingLogs = false;
+        this.cdr.detectChanges();
       });
   }
 

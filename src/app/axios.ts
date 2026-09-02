@@ -37,18 +37,25 @@ export class Axios {
   }
 
   getAuthToken(): string | null {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      return window.localStorage.getItem('auth_token');
+    if (typeof window !== 'undefined') {
+      return window.localStorage.getItem('auth_token') || window.sessionStorage.getItem('auth_token');
     }
     return null;
   }
 
-  setAuthToken(token: string | null): void {
-    if (typeof window !== 'undefined' && window.localStorage) {
+  setAuthToken(token: string | null, rememberMe: boolean = true): void {
+    if (typeof window !== 'undefined') {
       if (token !== null) {
-        window.localStorage.setItem('auth_token', token);
+        if (rememberMe) {
+          window.localStorage.setItem('auth_token', token);
+          window.sessionStorage.removeItem('auth_token');
+        } else {
+          window.sessionStorage.setItem('auth_token', token);
+          window.localStorage.removeItem('auth_token');
+        }
       } else {
         window.localStorage.removeItem('auth_token');
+        window.sessionStorage.removeItem('auth_token');
       }
     }
   }

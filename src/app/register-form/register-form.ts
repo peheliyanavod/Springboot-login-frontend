@@ -23,6 +23,9 @@ export class RegisterForm {
   confirmPassword: string = '';
   errorMessage: string = '';
   showPassword: boolean = false;
+  
+  passwordStrength: number = 0;
+  passwordFeedback: string = '';
   showConfirmPassword: boolean = false;
 
   togglePasswordVisibility(): void {
@@ -31,6 +34,39 @@ export class RegisterForm {
 
   toggleConfirmPasswordVisibility(): void {
     this.showConfirmPassword = !this.showConfirmPassword;
+  }
+
+  onPasswordChange(val: string): void {
+    this.password = val;
+    this.calculatePasswordStrength(val);
+  }
+
+  calculatePasswordStrength(password: string): void {
+    if (!password) {
+      this.passwordStrength = 0;
+      this.passwordFeedback = '';
+      return;
+    }
+
+    let strength = 0;
+    
+    if (password.length >= 8) strength += 1;
+    if (/[A-Z]/.test(password)) strength += 1;
+    if (/[a-z]/.test(password)) strength += 1;
+    if (/[0-9]/.test(password)) strength += 1;
+    if (/[@#$%^&+=!]/.test(password)) strength += 1;
+
+    this.passwordStrength = Math.min(4, Math.floor((strength / 5) * 4));
+
+    if (this.passwordStrength === 0 || this.passwordStrength === 1) {
+      this.passwordFeedback = 'Weak: Add numbers and special characters.';
+    } else if (this.passwordStrength === 2) {
+      this.passwordFeedback = 'Fair: Add uppercase letters.';
+    } else if (this.passwordStrength === 3) {
+      this.passwordFeedback = 'Good: Add more characters.';
+    } else {
+      this.passwordFeedback = 'Strong!';
+    }
   }
 
   onSubmit(): void {

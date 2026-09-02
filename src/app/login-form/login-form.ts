@@ -15,13 +15,14 @@ export class LoginForm {
   
   backendUrl = environment.backendUrl;
   
-  @Output() onSubmitEventLogin = new EventEmitter<{ username: string; password: string }>();
+  @Output() onSubmitEventLogin = new EventEmitter<{ username: string; password: string; rememberMe: boolean }>();
   @Output() onSubmitEventMfa = new EventEmitter<string>();
   @Output() onSwitchToRegister = new EventEmitter<void>();
   @Output() onSwitchToForgotPassword = new EventEmitter<void>();
 
   username: string = '';
   password: string = '';
+  rememberMe: boolean = true;
   mfaCode: string = '';
   showPassword: boolean = false;
 
@@ -33,7 +34,7 @@ export class LoginForm {
     if (this.isMfaStep) {
       this.onSubmitEventMfa.emit(this.mfaCode);
     } else {
-      this.onSubmitEventLogin.emit({ username: this.username, password: this.password });
+      this.onSubmitEventLogin.emit({ username: this.username, password: this.password, rememberMe: this.rememberMe });
     }
   }
 

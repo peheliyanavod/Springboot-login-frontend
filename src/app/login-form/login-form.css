@@ -139,6 +139,28 @@
   color: var(--text-dark);
 }
 
+.remember-me {
+  margin-top: -0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+  color: var(--text-dark);
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox-container input {
+  margin-right: 0.5rem;
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--primary-color);
+  cursor: pointer;
+}
+
 .login-btn {
   width: 100%;
   padding: 0.75rem 1.5rem;
