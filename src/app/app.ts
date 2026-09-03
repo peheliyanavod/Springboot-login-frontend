@@ -20,7 +20,7 @@ import { ToastService } from './toast.service';
 })
 export class App implements OnInit {
   protected readonly title = signal('frontend');
-  activeTab = signal<'login' | 'register' | 'auth' | 'admin' | 'forgot-password' | 'reset-password' | 'router'>('login');
+  activeTab = signal<'loading' | 'login' | 'register' | 'auth' | 'admin' | 'forgot-password' | 'reset-password' | 'router'>('login');
   message = signal<string>('');
   errorMessage = signal<string>('');
   userName = signal<string>('');
@@ -66,6 +66,7 @@ export class App implements OnInit {
       // Check if session token exists
       const savedToken = this.axios.getAuthToken();
       if (savedToken) {
+        this.activeTab.set('loading');
         this.axios.setAuthToken(savedToken);
         this.axios.request('GET', '/me', {})
           .then((response) => {

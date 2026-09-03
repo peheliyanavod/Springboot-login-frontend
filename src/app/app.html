@@ -16,7 +16,12 @@
 
   <main class="main-content">
 
-    @if (activeTab() === 'login') {
+    @if (activeTab() === 'loading') {
+      <div class="loading-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 50vh; color: #64748b;">
+        <div class="spinner-large" style="width: 3rem; height: 3rem; border: 3px solid rgba(91, 140, 133, 0.2); border-radius: 50%; border-top-color: var(--primary-color); animation: spin 1s ease-in-out infinite; margin-bottom: 1rem;"></div>
+        <p>Loading your session...</p>
+      </div>
+    } @else if (activeTab() === 'login') {
       <app-login-form 
         [serverError]="errorMessage()"
         [isMfaStep]="mfaStep()"
